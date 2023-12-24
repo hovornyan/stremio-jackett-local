@@ -1,0 +1,16 @@
+[
+	{
+		"name": "Jackett_2",
+		"logo": "https://static1.squarespace.com/static/55c17e7ae4b08ccd27be814e/t/599b81c32994ca8ff6c1cd37/1508813048508/Jackett-logo-2.jpg",
+		"description": "Stremio Add-on to get torrent results from Jackett",
+		"types": ["Movies", "Series"],
+		"repo": "hovornyan/stremio-jackett-local"
+	},
+	{
+		"name": "IMDB ID search",
+		"logo": "https://m.media-amazon.com/images/G/01/IMDb/BG_square._CB1509067564_SY230_SX307_AL_.png",
+		"description": "search movies by IMDB ID",
+		"types": ["Catalog"],
+		"repo": "jlvcm/stremio-imdb-id"
+	}
+]
