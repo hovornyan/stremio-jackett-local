@@ -23,7 +23,7 @@ const streamFromMagnet = (tor, uri, type, cb) => {
 
         let title = tor.title || parsed.name
         const size = '📀 ' + formatBytes(tor.size)
-        const subtitle = '📡 ' + tor.seeders
+        const subtitle = '🛰️ ' + tor.seeders
         const quality = '💎 ' + tor.extraTag
 
         title += '\r\n' + size
