@@ -8,11 +8,11 @@
 		"repo": "BoredLama/stremio-jackett-local"
 	},
 	{
-		"name": "Jackett_2",
+		"name": "Jackett_2v",
 		"logo": "https://static1.squarespace.com/static/55c17e7ae4b08ccd27be814e/t/599b81c32994ca8ff6c1cd37/1508813048508/Jackett-logo-2.jpg",
 		"description": "Stremio Add-on to get torrent results from Jackett",
 		"types": ["Movies", "Series"],
-		"repo": "hovornyan/stremio-jackett-local"
+		"repo": "hovornyan/stremio-jackett-local-2"
 	},
 	{
 		"name": "IMDB ID search",
