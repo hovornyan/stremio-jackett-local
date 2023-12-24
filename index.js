@@ -21,13 +21,14 @@ const streamFromMagnet = (tor, uri, type, cb) => {
 
         const infoHash = parsed.infoHash.toLowerCase()
 
-        let title = tor.extraTag || parsed.name
+        let title = tor.title || parsed.name
         const size = '📀 ' + formatBytes(tor.size)
         const subtitle = '📡 ' + tor.seeders
+        const quality = '💎 ' + tor.extraTag
 
         title += '\r\n' + size
         title += '\r\n' + subtitle
-        title += '\r\n' + tor.title
+        title += '\r\n' + quality
 
 
         let trackers = (parsed.announce || []).map(x => {
