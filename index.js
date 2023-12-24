@@ -3,50 +3,65 @@ const helper = require('./helpers')
 
 const parseTorrent = require('parse-torrent')
 const async = require('async')
-const { cinemeta, config } = require('internal')
+const {cinemeta, config} = require('internal')
 
+const formatBytes = (bytes, decimals = 2) => {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
 const streamFromMagnet = (tor, uri, type, cb) => {
     const toStream = (parsed) => {
 
         const infoHash = parsed.infoHash.toLowerCase()
 
         let title = tor.extraTag || parsed.name
+        const size = '📀 ' + formatBytes(tor.size_bytes)
+        const subtitle = '👤 ' + tor.seeders + ' ⬆️ ' + tor.peers + ' ⬇️'
 
-        const subtitle = tor.seeders + ' S / ' + tor.peers + ' L'
-
+        title += '\r\n' + size
         title += '\r\n' + subtitle
 
-	let trackers = (parsed.announce || []).map(x => { return "tracker:"+x })
+        let trackers = (parsed.announce || []).map(x => {
+            return "tracker:" + x
+        })
 
         if (trackers.length && (!config.dhtEnabled || config.dhtEnabled == 'True'))
-            trackers = trackers.concat(["dht:"+infoHash])
-	
-	const streamObj = {
+            trackers = trackers.concat(["dht:" + infoHash])
+
+        const streamObj = {
             name: tor.from,
             type: type,
             infoHash: infoHash,
             title: title
         }
-	    
-	if (trackers.length)
-	    streamObj.sources = trackers
 
-	cb(streamObj)
+        if (trackers.length)
+            streamObj.sources = trackers
+
+        cb(streamObj)
     }
+
     if (uri.startsWith("magnet:?")) {
         toStream(parseTorrent(uri))
     } else {
         parseTorrent.remote(uri, (err, parsed) => {
-          if (err) {
-            cb(false)
-            return
-          }
-          toStream(parsed)
+            if (err) {
+                cb(false)
+                return
+            }
+            toStream(parsed)
         })
     }
 }
 
-const { addonBuilder, getInterface, getRouter } = require('stremio-addon-sdk')
+const {addonBuilder, getInterface, getRouter} = require('stremio-addon-sdk')
 
 const builder = new addonBuilder({
     "id": "org.stremio.jackett",
@@ -63,14 +78,14 @@ const builder = new addonBuilder({
 
     "types": ["movie", "series"],
 
-    "idPrefixes": [ "tt" ],
+    "idPrefixes": ["tt"],
 
     "catalogs": []
 
 })
 
 builder.defineStreamHandler(args => {
-	return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
         if (!args.id) {
             reject(new Error('No ID Specified'))
@@ -93,11 +108,15 @@ builder.defineStreamHandler(args => {
                 // filter out torrents with less then 1 seed
 
                 if (config.minimumSeeds)
-                    tempResults = tempResults.filter(el => { return !!(el.seeders && el.seeders > config.minimumSeeds -1) })
+                    tempResults = tempResults.filter(el => {
+                        return !!(el.seeders && el.seeders > config.minimumSeeds - 1)
+                    })
 
                 // order by seeds desc
 
-                tempResults = tempResults.sort((a, b) => { return a.seeders < b.seeders ? 1 : -1 })
+                tempResults = tempResults.sort((a, b) => {
+                    return a.seeders < b.seeders ? 1 : -1
+                })
 
                 // limit to 15 results
 
@@ -125,12 +144,14 @@ builder.defineStreamHandler(args => {
                 }, 1)
 
                 q.drain = () => {
-                    resolve({ streams: streams })
+                    resolve({streams: streams})
                 }
 
-                tempResults.forEach(elm => { q.push(elm) })
+                tempResults.forEach(elm => {
+                    q.push(elm)
+                })
             } else {
-                resolve({ streams: [] })
+                resolve({streams: []})
             }
         }
 
@@ -138,7 +159,7 @@ builder.defineStreamHandler(args => {
 
         const imdb = idParts[0]
 
-        cinemeta.get({ type: args.type, imdb }).then(meta => {
+        cinemeta.get({type: args.type, imdb}).then(meta => {
             if (meta) {
 
                 const searchQuery = {
@@ -168,7 +189,7 @@ builder.defineStreamHandler(args => {
                     setTimeout(respondStreams, config.respTimeout)
 
             } else {
-                resolve({ streams: [] })
+                resolve({streams: []})
             }
         })
 
