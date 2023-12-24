@@ -29,6 +29,7 @@ const streamFromMagnet = (tor, uri, type, cb) => {
         title += '\r\n' + subtitle
         title += '\r\n' + tor.title
 
+
         let trackers = (parsed.announce || []).map(x => {
             return "tracker:" + x
         })
